@@ -32,6 +32,10 @@ def create_item(item: ItemCreate, db: Session = Depends(get_db)):
     item_service = ItemService(db)
     return item_service.create_item(item)
 
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the Inventory API!"}
+
 @app.get("/items/{item_id}", response_model=Item)
 def get_item(item_id: int, db: Session = Depends(get_db)):
     item_service = ItemService(db)
