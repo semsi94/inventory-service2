@@ -4,11 +4,20 @@ from app.database import SessionLocal, engine
 from app.models import item
 from app.schemas.item import Item, ItemCreate, ItemUpdate
 from app.services.item_service import ItemService
+import os
+import uvicorn
 
 # Create tables
 item.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+def start():
+    port = int(os.getenv("PORT", 8000))  # Get PORT from env, fallback to 8000
+    uvicorn.run("app.main:app", host="0.0.0.0", port=port)
+
+if __name__ == "__main__":
+    start()
 
 # Dependency
 def get_db():
@@ -52,11 +61,3 @@ def delete_item(item_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Item not found")
     return db_item
 
-if __name__ == "__main__":
-       import os
-       import uvicorn
-
-       # Get the port from the environment variable or default to 8000
-       port = int(os.getenv("PORT", 8000))
-
-       uvicorn.run("app.main:app", host="0.0.0.0", port=port, reload=True)
